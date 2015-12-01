@@ -3,7 +3,8 @@
 angular.module('modtools', [
     'config',
     'ngRoute',
-    'modtools.controllers'
+    'modtools.controllers',
+    'modtools.services'
   ])
 
   .config(['$routeProvider', function ($routeProvider) {

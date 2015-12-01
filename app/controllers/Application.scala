@@ -2,6 +2,7 @@ package controllers
 
 import play.api._
 import play.api.mvc._
+import play.api.libs.json._
 
 class Application extends Controller with AuthActions {
 
@@ -9,8 +10,11 @@ class Application extends Controller with AuthActions {
     Ok(views.html.index())
   }
 
-  def authenticated = MyAuthAction { implicit request =>
-    Ok(views.html.index())
+  def json = Action { implicit request =>
+    Ok(Json.obj(
+      "data" -> "foo",
+      "total" -> 4
+    ))
   }
 
 }
