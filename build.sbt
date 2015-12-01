@@ -10,6 +10,10 @@ libraryDependencies ++= Seq(
   jdbc,
   cache,
   ws,
+  "com.typesafe" % "config" % "1.3.0",
+  "com.adrianhurt" %% "play-bootstrap3" % "0.4.4-P24",
+  "com.gu" %% "play-googleauth" % "0.3.1",
+  "io.igl" %% "jwt" % "1.2.0",
   specs2 % Test
 )
 

@@ -3,10 +3,14 @@ package controllers
 import play.api._
 import play.api.mvc._
 
-class Application extends Controller {
+class Application extends Controller with AuthActions {
 
-  def index = Action {
-    Ok(views.html.index("Your new application is ready."))
+  def index = Action { implicit request =>
+    Ok(views.html.index())
+  }
+
+  def authenticated = MyAuthAction { implicit request =>
+    Ok(views.html.index())
   }
 
 }
