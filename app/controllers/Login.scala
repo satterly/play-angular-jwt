@@ -1,5 +1,6 @@
 package controllers
 
+import play.api.libs.json._
 import play.api.mvc.Security.AuthenticatedBuilder
 import play.api.mvc._
 import play.api.mvc.Results._
@@ -13,6 +14,18 @@ import org.joda.time.Duration
 
 import scala.util.{Try, Success, Failure}
 
+
+case class Email(value: String) extends ClaimValue {
+  override val field: ClaimField = Email
+  override val jsValue: JsValue = Json.toJson(value)
+}
+
+object Email extends ClaimField {
+  override def attemptApply(value: JsValue): Option[ClaimValue] =
+    value.asOpt[String].map(apply)
+  override val name: String = "email"
+}
+
 trait AuthActions extends Actions {
   val loginTarget: Call = routes.Login.login()
   val authConfig = OAuth.googleAuthConfig
@@ -21,8 +34,8 @@ trait AuthActions extends Actions {
 
     val config = ConfigFactory.load()
     val token = request.headers.get("Authorization").map(_.stripPrefix("Bearer ")).getOrElse("")
-    val user = DecodedJwt.validateEncodedJwt(token, config.getString("jwt.secret"), Algorithm.HS256, Set(Typ), Set(Iss, Sub)) match {
-      case Success(claims) => Some(UserIdentity(sub = "sub", email = "", firstName = "", lastName = "", exp = 0L, avatarUrl = None))
+    val user = DecodedJwt.validateEncodedJwt(token, config.getString("jwt.secret"), Algorithm.HS256, Set(Typ), Set(Iss, Sub, Aud, Exp, Nbf, Iat, Email)) match {
+      case Success(claims) => Some(UserIdentity(sub = claims.getClaim[Sub].toString, email = claims.getClaim[Email].toString, firstName = "", lastName = "", exp = 0L, avatarUrl = None))
       case Failure(error) => { println(error.getMessage) ; None }
     }
     println(s"User from bearer token = $user")
@@ -76,7 +89,20 @@ class Login extends Controller with AuthActions {
           // We store the URL a user was trying to get to in the LOGIN_ORIGIN_KEY in AuthAction
           // Redirect a user back there now if it exists
 
-          val jwt = new DecodedJwt(Seq(Alg(Algorithm.HS256), Typ("JWT")), Seq(Iss("readme11111"), Sub("foo")))
+          def now: Long = System.currentTimeMillis / 1000
+
+          val jwt = new DecodedJwt(
+            Seq(Alg(Algorithm.HS256), Typ("JWT")),
+            Seq(
+              Iss("https://modtools.discussion.gutools.co.uk"),
+              Sub(identity.fullName),
+              Aud(config.getString("jwt.claims.aud")),
+              Exp(identity.exp),
+              Nbf(now),
+              Iat(now),
+              Email(identity.email)
+            )
+          )
           val fragment = "#token_type=Bearer&id_token=" + jwt.encodedAndSigned(config.getString("jwt.secret"))
 
           val redirect = session.get(LOGIN_ORIGIN_KEY) match {
