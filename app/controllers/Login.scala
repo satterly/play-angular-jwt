@@ -2,6 +2,7 @@ package controllers
 
 import play.api.mvc.Security.AuthenticatedBuilder
 import play.api.mvc._
+import play.api.mvc.Results._
 import play.api.libs.concurrent.Execution.Implicits._
 import com.typesafe.config.ConfigFactory
 import scala.concurrent.Future
@@ -28,7 +29,9 @@ trait AuthActions extends Actions {
     user
   }
 
-  object TokenAuthAction extends AuthenticatedBuilder(r => tokenChecker(r), r => sendForAuth(r))
+  def unauthorized[A](request:RequestHeader) = Unauthorized
+
+  object TokenAuthAction extends AuthenticatedBuilder(r => tokenChecker(r), r => unauthorized(r))
 }
 
 object OAuth {
