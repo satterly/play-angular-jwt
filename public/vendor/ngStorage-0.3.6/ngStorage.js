@@ -43,7 +43,7 @@
 
     function _storageProvider(storageType) {
         return function () {
-          var storageKeyPrefix = 'ngStorage-';
+          var storageKeyPrefix = 'GU.';
 
           this.setKeyPrefix = function (prefix) {
             if (typeof prefix !== 'string') {
@@ -52,8 +52,8 @@
             storageKeyPrefix = prefix;
           };
 
-          var serializer = angular.toJson;
-          var deserializer = angular.fromJson;
+          var serializer = angular.identity;
+          var deserializer = angular.identity;
 
           this.setSerializer = function (s) {
             if (typeof s !== 'function') {
