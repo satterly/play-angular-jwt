@@ -4,7 +4,7 @@ angular.module('modtools', [
     'config',
     'ngRoute',
     'ngStorage',
-    'angular-jwt',
+   // 'angular-jwt',
     'modtools.controllers',
     'modtools.services'
   ])
