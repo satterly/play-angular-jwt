@@ -12,25 +12,29 @@ import com.gu.googleauth._
 import play.api.Play.current
 import org.joda.time.Duration
 
+import scala.util.{Try, Success, Failure}
+
 trait AuthActions extends Actions {
   val loginTarget: Call = routes.Login.loginAction()
   val authConfig = OAuth.googleAuthConfig
 
   def tokenChecker(request: RequestHeader) = {
 
-    val claims = request.headers.get("Authorization") match {
-      case Some(jwt) => DecodedJwt.validateEncodedJwt(jwt, "secret", Algorithm.HS256, Set(Typ), Set(Iss))
-      case _ => None
+    val config = ConfigFactory.load()
+    val token = request.headers.get("Authorization").map(_.stripPrefix("Bearer ")).getOrElse("")
+    val user = DecodedJwt.validateEncodedJwt(token, config.getString("jwt.secret"), Algorithm.HS256, Set(Typ), Set(Iss, Sub)) match {
+      case Success(claims) => Some(UserIdentity(sub = "sub", email = "", firstName = "", lastName = "", exp = 0L, avatarUrl = None))
+      case Failure(error) => { println(error.getMessage) ; None }
     }
-    println(claims.toString)
+    println(user.toString)
 
     Some(UserIdentity(email = "foo", sub = "foo",
       firstName = "foo", lastName = "foo", exp = 1L, avatarUrl = Some("foo")))
-
+    user
   }
 
 
-object TokenAuthAction extends AuthenticatedBuilder(r => tokenChecker(r), r => sendForAuth(r))
+  object TokenAuthAction extends AuthenticatedBuilder(r => tokenChecker(r), r => sendForAuth(r))
 }
 
 object OAuth {
@@ -78,6 +82,7 @@ class Login extends Controller with AuthActions {
 
    */
   def oauth2Callback = Action.async { implicit request =>
+    val config = ConfigFactory.load()
     val session = request.session
     session.get(OAuth.ANTI_FORGERY_KEY) match {
       case None =>
@@ -88,10 +93,10 @@ class Login extends Controller with AuthActions {
           // Redirect a user back there now if it exists
 
           val jwt = new DecodedJwt(Seq(Alg(Algorithm.HS256), Typ("JWT")), Seq(Iss("readme11111"), Sub("foo")))
-          val fragment = "#token_type=Bearer&id_token=" + jwt.encodedAndSigned("secret")
+          val fragment = "#token_type=Bearer&id_token=" + jwt.encodedAndSigned(config.getString("jwt.secret"))
 
           val redirect = session.get(LOGIN_ORIGIN_KEY) match {
-            case Some(url) => Redirect(url + fragment)
+            case Some(url) => Redirect("/" + fragment)
             case None => Redirect(routes.Application.index() + fragment)
           }
           // Store the JSON representation of the identity in the session - this is checked by AuthAction later
