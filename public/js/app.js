@@ -49,7 +49,7 @@ angular.module('modtools', [
 //    });
 //}]);
 
-//
+
 //.config(function Config($httpProvider, jwtInterceptorProvider) {
 //  jwtInterceptorProvider.tokenGetter = function() {
 //    return localStorage.getItem('id_token');
@@ -66,14 +66,19 @@ angular.module('modtools', [
                 config.headers = config.headers || {};
                 if ($localStorage.id_token) {
                     config.headers.Authorization = 'Bearer ' + $localStorage.id_token;
-                } else if ($location.hash()) {
-                    console.log($location.hash);
-                    $localStorage.id_token = $location.hash().split('=')[2];
                 } else {
                     console.log('window location');
                     $window.location = "/loginAction";
                 }
                 return config;
+            },
+            'response': function(response) {
+                if ($location.hash()) {
+                    console.log($location.hash);
+                    $localStorage.id_token = $location.hash().split('=')[2];
+                    $location.hash('');
+                }
+                return response;
             }
         };
     });

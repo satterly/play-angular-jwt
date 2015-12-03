@@ -1,14 +1,12 @@
 package controllers
 
-import io.igl.jwt._
-import play.api.libs.ws.WSAPI
 import play.api.mvc.Security.AuthenticatedBuilder
 import play.api.mvc._
 import play.api.libs.concurrent.Execution.Implicits._
 import com.typesafe.config.ConfigFactory
-import play.api.libs.json.Json
 import scala.concurrent.Future
 import com.gu.googleauth._
+import io.igl.jwt._
 import play.api.Play.current
 import org.joda.time.Duration
 
@@ -26,13 +24,9 @@ trait AuthActions extends Actions {
       case Success(claims) => Some(UserIdentity(sub = "sub", email = "", firstName = "", lastName = "", exp = 0L, avatarUrl = None))
       case Failure(error) => { println(error.getMessage) ; None }
     }
-    println(user.toString)
-
-    Some(UserIdentity(email = "foo", sub = "foo",
-      firstName = "foo", lastName = "foo", exp = 1L, avatarUrl = Some("foo")))
+    println(s"User from bearer token = $user")
     user
   }
-
 
   object TokenAuthAction extends AuthenticatedBuilder(r => tokenChecker(r), r => sendForAuth(r))
 }
@@ -57,11 +51,10 @@ object OAuth {
 
 class Login extends Controller with AuthActions {
 
-
   def login = Action { implicit request =>
     println(request.session.toString)
     val error = request.flash.get("error")
-    Ok
+    Ok(views.html.login(error))
   }
 
   /*
