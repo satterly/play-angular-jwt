@@ -10,7 +10,7 @@ class Application extends Controller with AuthActions {
     Ok(views.html.index())
   }
 
-  def json = Action { implicit request =>
+  def json = TokenAuthAction { implicit request =>
     Ok(Json.obj(
       "data" -> "foo",
       "total" -> 4

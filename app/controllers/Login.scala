@@ -24,14 +24,13 @@ trait AuthActions extends Actions {
     }
     println(claims.toString)
 
-
     Some(UserIdentity(email = "foo", sub = "foo",
       firstName = "foo", lastName = "foo", exp = 1L, avatarUrl = Some("foo")))
-    None
+
   }
 
 
-object MyAuthAction extends AuthenticatedBuilder(r => tokenChecker(r), r => sendForAuth(r))
+object TokenAuthAction extends AuthenticatedBuilder(r => tokenChecker(r), r => sendForAuth(r))
 }
 
 object OAuth {
@@ -88,7 +87,7 @@ class Login extends Controller with AuthActions {
           // We store the URL a user was trying to get to in the LOGIN_ORIGIN_KEY in AuthAction
           // Redirect a user back there now if it exists
 
-          val jwt = new DecodedJwt(Seq(Alg(Algorithm.HS256), Typ("JWT")), Seq(Iss("readme")))
+          val jwt = new DecodedJwt(Seq(Alg(Algorithm.HS256), Typ("JWT")), Seq(Iss("readme11111"), Sub("foo")))
           val fragment = "#token_type=Bearer&id_token=" + jwt.encodedAndSigned("secret")
 
           val redirect = session.get(LOGIN_ORIGIN_KEY) match {
