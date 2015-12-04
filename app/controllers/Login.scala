@@ -124,10 +124,6 @@ class Login extends Controller with AuthActions {
   }
 
   def logout = Action { implicit request =>
-    Redirect(routes.Application.index()).withNewSession
-  }
-
-  def userInfo = Action { implicit request =>
-    Ok("foo")
+    Redirect("https://mail.google.com/mail/u/0/?logout&hl=en")
   }
 }

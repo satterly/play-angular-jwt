@@ -3,18 +3,23 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.Application.index
-GET     /json                       controllers.Application.json
+GET     /                                 controllers.Application.index
 
-GET     /login                      controllers.Login.login
-GET     /oauth2callback             controllers.Login.oauth2Callback
-GET     /logout                     controllers.Login.logout
-GET     /userinfo                   controllers.Login.userInfo
+GET     /login                            controllers.Login.login
+GET     /oauth2callback                   controllers.Login.oauth2Callback
+GET     /logout                           controllers.Login.logout
 
-#GET     /api/queues                controllers.ModerationQueues.list
-#GET     /api/queues/:queue/next    controllers.ModerationQueues.next(queue: String, discussionKey: Option[String])
+#POST    /api/discussions                  controllers.Discussions.list
+#GET     /api/discussions/:key             controllers.Discussions.show(key: String)
+#PUT     /api/discussions/:key/watch       controllers.Discussions.watch(key: String)
+#PUT     /api/discussions/:key/unwatch     controllers.Discussions.unwatch(key: String)
+
+#POST    /api/moderation/request           controllers.ModerationRequest.create(queue: String)
+#GET     /api/moderation/request/next      controllers.ModerationRequest.next(queue: String, discussionKey: Option[String])
+
+#GET     /api/moderation/queues            controllers.ModerationQueues.list
+
+#GET     /api/moderator/:id/actions        controllers.Moderator.list(id: Long)
 
 # Map static resources from the /public folder to the /assets URL path
-#GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
-
-GET     /*file                      controllers.Assets.versioned(path="/public", file: Asset)
+GET     /*file                            controllers.Assets.versioned(path="/public", file: Asset)
