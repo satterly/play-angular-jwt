@@ -4,6 +4,7 @@
 
 # Home page
 GET     /                                 controllers.Application.index
+GET     /json                                 controllers.Application.json
 
 GET     /login                            controllers.Login.login
 GET     /oauth2callback                   controllers.Login.oauth2Callback
