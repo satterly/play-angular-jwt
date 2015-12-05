@@ -4,10 +4,10 @@
 
 angular.module('modtools.controllers', [])
 
-  .controller('HomeController', ['$scope', '$location', 'Moderation',
-    function ($scope, $location, Moderation) {
+  .controller('HomeController', ['$scope', '$location', 'Discussion',
+    function ($scope, $location, Discussion) {
 
-    Moderation.get(function(response) {
+    Discussion.get({key:'/p/4dgcq'.replace('/p/','')}, function(response) {
         console.log(response);
         $scope.data = response.data;
         $scope.total = response.total;

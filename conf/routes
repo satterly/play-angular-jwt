@@ -11,7 +11,7 @@ GET     /oauth2callback                   controllers.Login.oauth2Callback
 GET     /logout                           controllers.Login.logout
 
 #POST    /api/discussions                  controllers.Discussions.list
-#GET     /api/discussions/:key             controllers.Discussions.show(key: String)
+GET     /api/discussions/$key</?p/\w+>             controllers.Discussions.show(key: String)
 #PUT     /api/discussions/:key/watch       controllers.Discussions.watch(key: String)
 #PUT     /api/discussions/:key/unwatch     controllers.Discussions.unwatch(key: String)
 
