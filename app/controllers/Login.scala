@@ -126,4 +126,15 @@ class Login extends Controller with AuthActions {
   def logout = Action { implicit request =>
     Redirect("https://mail.google.com/mail/u/0/?logout&hl=en")
   }
+
+  def userinfo = TokenAuthAction { implicit request =>
+
+    val config = ConfigFactory.load()
+    val token = request.headers.get("Authorization").map(_.stripPrefix("Bearer ")).getOrElse("")
+    val user = DecodedJwt.validateEncodedJwt(token, config.getString("jwt.secret"), Algorithm.HS256, Set(Typ), Set(Iss, Sub, Aud, Exp, Nbf, Iat, Email)) match {
+      case Success(claims) => Some(UserIdentity(sub = claims.getClaim[Sub].toString, email = claims.getClaim[Email].toString, firstName = "", lastName = "", exp = 0L, avatarUrl = None))
+      case Failure(error) => { println(error.getMessage) ; None }
+    }
+    Ok(Json.toJson(user))
+  }
 }

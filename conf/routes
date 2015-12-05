@@ -9,6 +9,7 @@ GET     /json                                 controllers.Application.json
 GET     /login                            controllers.Login.login
 GET     /oauth2callback                   controllers.Login.oauth2Callback
 GET     /logout                           controllers.Login.logout
+GET     /userinfo                         controllers.Login.userinfo
 
 #POST    /api/antispam/:word               controllers.AntiSpam.create(word: String)
 GET     /api/antispam                     controllers.AntiSpam.list
