@@ -11,9 +11,10 @@ angular.module('modtools', [
 
   .config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
     $routeProvider.when('/', {templateUrl: 'partials/home.html', controller: 'HomeController'});
+    $routeProvider.when('/antispam', {templateUrl: 'partials/antispam.html', controller: 'AntiSpamController'});
     $routeProvider.otherwise({redirectTo: '/'});
 
-    $locationProvider.html5Mode(true).hashPrefix('!');
+    $locationProvider.html5Mode(false).hashPrefix('!');
   }])
 
 .config(['$httpProvider',

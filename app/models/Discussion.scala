@@ -1,7 +1,6 @@
 package models
 
 import com.typesafe.config.ConfigFactory
-import org.joda.time.DateTime
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws._
 

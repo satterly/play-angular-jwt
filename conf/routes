@@ -10,8 +10,13 @@ GET     /login                            controllers.Login.login
 GET     /oauth2callback                   controllers.Login.oauth2Callback
 GET     /logout                           controllers.Login.logout
 
+#POST    /api/antispam/:word               controllers.AntiSpam.create(word: String)
+GET     /api/antispam                     controllers.AntiSpam.list
+#GET     /api/antispam/:word               controllers.AntiSpam.get(word: String)  # FIXME is this needed?
+#DELETE  /api/antispam/:word               controllers.AntiSpam.delete(word: String)
+
 #POST    /api/discussions                  controllers.Discussions.list
-GET     /api/discussions/$key</?p/\w+>             controllers.Discussions.show(key: String)
+GET     /api/discussions/$key</?p/\w+>    controllers.Discussions.show(key: String)
 #PUT     /api/discussions/:key/watch       controllers.Discussions.watch(key: String)
 #PUT     /api/discussions/:key/unwatch     controllers.Discussions.unwatch(key: String)
 

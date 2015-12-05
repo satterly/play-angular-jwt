@@ -12,10 +12,13 @@ angular.module('modtools.controllers', [])
         $scope.data = response.data;
         $scope.total = response.total;
     });
-
   }])
 
-    .controller('AuthController', ['$scope', '$location',
-      function ($scope, $location) {
+    .controller('AntiSpamController', ['$scope', '$location', 'AntiSpam',
+      function ($scope, $location, AntiSpam) {
+
+      AntiSpam.list(function(response) {
+        $scope.badwords = response.data;
+      });
 
     }]);

@@ -1,0 +1,16 @@
+<h1>AntiSpam Bad Words</h1>
+
+<table>
+    <tr>
+        <th>Spam word</th>
+        <th>Links Only?</th>
+        <th>Created At</th>
+        <th></th>
+    </tr>
+    <tr ng-repeat="badword in badwords">
+        <td>{{ badword.word }}</td>
+        <td>{{ badword.urlLinksOnly }}</td>
+        <td>{{ badword.createdAt | date:'EEE&nbsp;d&nbsp;MMM&nbsp;HH:mm' }}</td>
+        <td>DELETE</td>
+    </tr>
+</table>
