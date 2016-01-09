@@ -1,18 +1,18 @@
 package controllers
 
+import com.gu.googleauth._
+import com.typesafe.config.ConfigFactory
+import io.igl.jwt._
+import org.joda.time.Duration
+import play.api.Play.current
+import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json._
+import play.api.mvc.Results._
 import play.api.mvc.Security.AuthenticatedBuilder
 import play.api.mvc._
-import play.api.mvc.Results._
-import play.api.libs.concurrent.Execution.Implicits._
-import com.typesafe.config.ConfigFactory
-import scala.concurrent.Future
-import com.gu.googleauth._
-import io.igl.jwt._
-import play.api.Play.current
-import org.joda.time.Duration
 
-import scala.util.{Try, Success, Failure}
+import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 
 case class Email(value: String) extends ClaimValue {
@@ -30,7 +30,7 @@ trait AuthActions extends Actions {
   val loginTarget: Call = routes.Login.login()
   val authConfig = OAuth.googleAuthConfig
 
-  def tokenChecker(request: RequestHeader) = {
+  def authenticate(request: RequestHeader) = {
 
     val config = ConfigFactory.load()
     val token = request.headers.get("Authorization").map(_.stripPrefix("Bearer ")).getOrElse("")
@@ -44,7 +44,7 @@ trait AuthActions extends Actions {
 
   def unauthorized[A](request:RequestHeader) = Unauthorized
 
-  object TokenAuthAction extends AuthenticatedBuilder(r => tokenChecker(r), r => unauthorized(r))
+  object TokenAuthAction extends AuthenticatedBuilder(r => authenticate(r), r => unauthorized(r))
 }
 
 object OAuth {
