@@ -30,21 +30,27 @@ trait AuthActions extends Actions {
   val loginTarget: Call = routes.Login.login()
   val authConfig = OAuth.googleAuthConfig
 
-  def authenticate(request: RequestHeader) = {
+  def getUserFromToken(request: RequestHeader) = {
 
-    val config = ConfigFactory.load()
-    val token = request.headers.get("Authorization").map(_.stripPrefix("Bearer ")).getOrElse("")
-    val user = DecodedJwt.validateEncodedJwt(token, config.getString("jwt.secret"), Algorithm.HS256, Set(Typ), Set(Iss, Sub, Aud, Exp, Nbf, Iat, Email)) match {
-      case Success(claims) => Some(UserIdentity(sub = claims.getClaim[Sub].toString, email = claims.getClaim[Email].toString, firstName = "", lastName = "", exp = 0L, avatarUrl = None))
-      case Failure(error) => { println(error.getMessage) ; None }
-    }
-    println(s"User from bearer token = $user")
-    user
+      val config = ConfigFactory.load()
+//    val token = request.headers.get("Authorization").map(_.stripPrefix("Bearer ")).getOrElse("")
+//    val user = DecodedJwt.validateEncodedJwt(token, config.getString("jwt.secret"), Algorithm.HS256, Set(Typ), Set(Iss, Sub, Aud, Exp, Nbf, Iat, Email)) match {
+//      case Success(claims) => Some(UserIdentity(sub = claims.getClaim[Sub].toString, email = claims.getClaim[Email].toString, firstName = "", lastName = "", exp = 0L, avatarUrl = None))
+//      case Failure(error) => { println(error.getMessage) ; None }
+//    }
+//    println(s"User from bearer token = $user")
+//    user
+
+    for {
+      token <- request.headers.get("Authorization").map(_.stripPrefix("Bearer "))
+      claims <- DecodedJwt.validateEncodedJwt(token, config.getString("jwt.secret"), Algorithm.HS256, Set(Typ), Set(Iss, Sub, Aud, Exp, Nbf, Iat, Email))
+    } yield claims.getClaim[Sub]
+
   }
 
   def unauthorized[A](request:RequestHeader) = Unauthorized
 
-  object TokenAuthAction extends AuthenticatedBuilder(r => authenticate(r), r => unauthorized(r))
+  object TokenAuthAction extends AuthenticatedBuilder(req => getUserFromToken(req), req => unauthorized(req))
 }
 
 object OAuth {
